@@ -348,6 +348,12 @@ a { color: inherit; text-decoration: none; }
 .stat .lbl { font-size: 13px; color: var(--muted); margin-top: 4px; }
 @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
 
+/* ============== LEAD PHOTOS STRIP (bare marquee — directly below hero) ============== */
+.lead-strip {
+  padding: 30px 0 10px;
+  background: #fff;
+}
+
 /* ============== CAR SHOWCASE CAROUSEL ============== */
 .showcase {
   padding: 70px 0 80px;
