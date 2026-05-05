@@ -369,7 +369,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   gap: 22px;
   width: max-content;
-  animation: carScroll 60s linear infinite;
+  animation: carScroll 35s linear infinite;
   padding: 6px 0;
 }
 .car-marquee:hover .car-track { animation-play-state: paused; }
@@ -377,6 +377,9 @@ a { color: inherit; text-decoration: none; }
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
+
+/* Showcase section ("Why 500+ Car Dealers Trust On Our Leads") scrolls in the opposite direction */
+.showcase .car-track { animation-direction: reverse; }
 @media (prefers-reduced-motion: reduce) {
   .car-track { animation: none; }
 }
@@ -629,7 +632,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   gap: 22px;
   width: max-content;
-  animation: reviewScroll 80s linear infinite;
+  animation: reviewScroll 45s linear infinite;
   padding: 8px 0;
 }
 .review-marquee:hover .review-track { animation-play-state: paused; }
