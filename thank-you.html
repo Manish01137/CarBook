@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>" />
   <style>
-    body { padding-bottom: 0; background: linear-gradient(160deg, #ECFDF5 0%, #F0F9FF 100%); }
+    body { padding-bottom: 0; background: linear-gradient(160deg, #FFF1F7 0%, #FCEEF5 100%); }
     .ty-wrap {
       max-width: 640px;
       margin: 0 auto;
@@ -26,7 +26,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 50px;
       margin: 0 auto 22px;
-      box-shadow: 0 14px 30px rgba(37,211,102,.45);
+      box-shadow: 0 14px 30px rgba(236,72,153,.45);
       animation: pop .5s cubic-bezier(.2,.8,.2,1) both;
     }
     @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -37,13 +37,64 @@
       color: var(--primary);
       margin: 0 0 12px;
     }
-    .ty-sub { font-size: 17px; color: var(--text); margin: 0 0 32px; }
+    .ty-sub { font-size: 17px; color: var(--text); margin: 0 0 26px; }
+
+    /* Razorpay payment ID box */
+    .pay-id-box {
+      background: #fff;
+      border: 2px dashed var(--accent);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 0 auto 24px;
+      max-width: 460px;
+      text-align: left;
+    }
+    .pay-id-box label {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .pay-id-row { display: flex; align-items: center; gap: 10px; }
+    .pay-id-row code {
+      flex: 1;
+      font-family: 'SF Mono', Menlo, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--pink-soft);
+      padding: 8px 12px;
+      border-radius: 8px;
+      word-break: break-all;
+      -webkit-user-select: all;
+              user-select: all;
+    }
+    .copy-btn {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform .15s, background .2s;
+    }
+    .copy-btn:hover { background: var(--accent); transform: translateY(-1px); }
+    .copy-btn.copied { background: #16A34A; }
+    .pay-id-hint { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
     .ty-card {
       background: #fff;
       border: 2px solid var(--accent);
       border-radius: 20px;
       padding: 30px 26px;
-      box-shadow: 0 18px 40px rgba(11,36,71,.12);
+      box-shadow: 0 18px 40px rgba(0,0,0,.12);
       text-align: left;
     }
     .ty-card h3 {
@@ -57,7 +108,7 @@
     .wa-cta {
       display: flex; align-items: center; justify-content: center; gap: 10px;
       width: 100%;
-      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      background: linear-gradient(180deg, var(--whatsapp), var(--whatsapp-deep));
       color: #fff !important;
       padding: 18px 24px;
       border-radius: 14px;
@@ -97,12 +148,22 @@
       Welcome to Carbook! You're now part of India's smartest car dealer lead network.
     </p>
 
+    <!-- Razorpay payment ID — populated from URL ?payment_id=... -->
+    <div class="pay-id-box" id="payIdBox" style="display:none">
+      <label>Your Razorpay Payment ID</label>
+      <div class="pay-id-row">
+        <code id="payIdValue">—</code>
+        <button class="copy-btn" id="copyBtn" type="button">Copy</button>
+      </div>
+      <div class="pay-id-hint">📌 Save this ID for your records. Use it if you need to contact support.</div>
+    </div>
+
     <div class="ty-card">
       <h3>📱 Join the Dealer WhatsApp Community</h3>
       <p>Click the button below to join the private dealer-only WhatsApp group. Your first batch of verified buyer inquiries arrives <strong>tomorrow at 11 AM sharp.</strong></p>
 
-      <!-- =====  REPLACE THE href BELOW WITH YOUR ACTUAL WHATSAPP COMMUNITY INVITE LINK  =====
-           Get the link: WhatsApp → Community → Invite link → copy
+      <!-- =====  REPLACE href WITH YOUR ACTUAL WHATSAPP COMMUNITY INVITE LINK  =====
+           WhatsApp app → Community → Invite link → copy
            e.g. https://chat.whatsapp.com/XXXXXXXXXXXXXXXXXX
       -->
       <a class="wa-cta" href="https://chat.whatsapp.com/REPLACE_WITH_INVITE_LINK" target="_blank" rel="noopener">
@@ -124,5 +185,41 @@
       Need help? WhatsApp us at <a href="https://wa.me/91XXXXXXXXXX">+91 XXXXX-XXXXX</a> · We reply within 24–48 hours.
     </p>
   </div>
+
+  <script>
+    (function () {
+      // Read payment_id from URL and display it
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('payment_id');
+      const box = document.getElementById('payIdBox');
+      const val = document.getElementById('payIdValue');
+      const btn = document.getElementById('copyBtn');
+
+      if (id) {
+        val.textContent = id;
+        box.style.display = 'block';
+      }
+
+      // Copy-to-clipboard
+      btn.addEventListener('click', function () {
+        const text = val.textContent.trim();
+        if (!text || text === '—') return;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = '✓ Copied';
+          btn.classList.add('copied');
+          setTimeout(function () {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 1800);
+        }).catch(function () {
+          // Fallback: select text
+          const range = document.createRange();
+          range.selectNode(val);
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(range);
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
